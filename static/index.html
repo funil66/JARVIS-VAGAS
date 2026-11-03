@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JARVIS RPA Vagas — Monitoramento Front-End Gupy (PC2)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b0f17; color: #f1f5f9; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .glass { background: rgba(18, 24, 38, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .terminal-scroll::-webkit-scrollbar { width: 6px; }
+    .terminal-scroll::-webkit-scrollbar-track { background: #070a10; }
+    .terminal-scroll::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+    @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .live-dot { animation: pulse-dot 1.5s infinite; }
+  </style>
+</head>
+<body class="min-h-screen p-4 md:p-6 lg:p-8">
+
+  <!-- TOP HEADER -->
+  <header class="flex flex-col md:flex-row items-start md:items-center justify-between pb-6 border-b border-slate-800 gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 font-bold text-xl">
+        ⚡
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white">JARVIS RPA Vagas</h1>
+          <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">PC2 NATIVE</span>
+          <span class="px-2 py-0.5 rounded text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">GEMINI 3.8 FLASH</span>
+        </div>
+        <p class="text-xs text-slate-400">Esteira Autônoma de Descoberta e Avanço de Etapas SoM no Portal Gupy</p>
+      </div>
+    </div>
+
+    <!-- CONTROLS & STATUS -->
+    <div class="flex items-center gap-3 w-full md:w-auto">
+      <div id="service-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-950/40 border border-emerald-800/60 text-xs font-medium text-emerald-300">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+        <span id="service-status-text">Daemon Ativo (PC2)</span>
+      </div>
+
+      <button onclick="triggerImmediateCycle()" id="btn-run" class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition shadow-lg shadow-blue-600/20 active:scale-95">
+        <span>▶️</span> Disparar Ciclo Agora
+      </button>
+
+      <button onclick="refreshData()" class="p-2 rounded-lg glass hover:bg-slate-800 text-slate-300 text-xs font-semibold transition" title="Recarregar">
+        🔄
+      </button>
+    </div>
+  </header>
+
+  <!-- METRICS CARDS -->
+  <section class="grid grid-cols-2 md:grid-cols-4 gap-4 my-6">
+    <div class="glass p-4 rounded-xl">
+      <div class="text-xs text-slate-400 font-medium">Vagas Mapeadas</div>
+      <div id="stat-total-vagas" class="text-2xl md:text-3xl font-extrabold text-white mt-1">--</div>
+      <div class="text-[10px] text-slate-500 mt-1">Portal Gupy raspado</div>
+    </div>
+    <div class="glass p-4 rounded-xl border-l-2 border-l-emerald-500">
+      <div class="text-xs text-emerald-400 font-medium">Top Matches (≥80%)</div>
+      <div id="stat-top-matches" class="text-2xl md:text-3xl font-extrabold text-emerald-300 mt-1">--</div>
+      <div class="text-[10px] text-slate-500 mt-1">Aderência Candidato Modelo</div>
+    </div>
+    <div class="glass p-4 rounded-xl border-l-2 border-l-cyan-500">
+      <div class="text-xs text-cyan-400 font-medium">Candidaturas Ativas</div>
+      <div id="stat-ativas" class="text-2xl md:text-3xl font-extrabold text-cyan-300 mt-1">--</div>
+      <div class="text-[10px] text-slate-500 mt-1">Em processo seletivo Gupy</div>
+    </div>
+    <div class="glass p-4 rounded-xl border-l-2 border-l-purple-500">
+      <div class="text-xs text-purple-400 font-medium">Distribuição Modalidade</div>
+      <div id="stat-modalidade" class="text-xs font-semibold text-slate-300 mt-2 space-y-1">
+        <div>🏠 Remoto: <span id="mode-remoto" class="text-purple-300 font-bold">--</span></div>
+        <div>🏢/🏠 Híbrido: <span id="mode-hibrido" class="text-slate-300 font-bold">--</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN MONITORING GRID -->
+  <main class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT: LIVE BROWSER SCREENCAST -->
+    <div class="lg:col-span-7 flex flex-col gap-4">
+      <div class="glass rounded-xl overflow-hidden flex flex-col">
+        <div class="px-4 py-3 bg-slate-900/60 border-b border-slate-800 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-red-500 live-dot"></span>
+            <span class="text-xs font-bold tracking-wider text-slate-200 uppercase">Live Browser Screencast</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 mono">GUPY PLAYWRIGHT</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span id="screencast-time" class="text-[10px] text-slate-400 mono">Atualizado agora</span>
+            <label class="flex items-center gap-1 text-[11px] text-slate-400 cursor-pointer">
+              <input type="checkbox" id="auto-refresh" checked class="rounded bg-slate-800 border-slate-700 text-blue-600 focus:ring-0">
+              Auto (1.5s)
+            </label>
+          </div>
+        </div>
+
+        <div class="relative bg-slate-950 flex items-center justify-center min-h-[380px] p-2">
+          <img id="live-img" src="/api/screenshot/live" alt="Live Screencast" class="max-h-[500px] w-auto object-contain rounded border border-slate-800/80 shadow-2xl transition duration-300" onerror="this.src='/api/screenshot/live?fallback=1'">
+          <div id="live-overlay" class="absolute top-4 left-4 px-2 py-1 bg-black/70 backdrop-blur rounded text-[11px] text-emerald-400 font-medium border border-emerald-500/30">
+            👁️ Visão Set-of-Mark Ativa
+          </div>
+        </div>
+
+        <!-- RECENT SCREENSHOTS CAROUSEL/THUMBNAILS -->
+        <div class="p-3 bg-slate-900/40 border-t border-slate-800">
+          <div class="text-[11px] font-semibold text-slate-400 mb-2 flex items-center justify-between">
+            <span>Capturas de Etapas Recentes (SoM):</span>
+            <span id="thumbs-count" class="text-[10px] text-slate-500">0 capturas</span>
+          </div>
+          <div id="thumbs-container" class="flex gap-2 overflow-x-auto pb-1 terminal-scroll">
+            <!-- Dynamic thumbnails -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: LIVE TERMINAL LOGS -->
+    <div class="lg:col-span-5 flex flex-col gap-4">
+      <div class="glass rounded-xl overflow-hidden flex flex-col h-[580px]">
+        <div class="px-4 py-3 bg-slate-900/60 border-b border-slate-800 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 live-dot"></span>
+            <span class="text-xs font-bold tracking-wider text-slate-200 uppercase">Console Streaming PC2</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="clearTerminal()" class="text-[10px] text-slate-400 hover:text-white px-2 py-0.5 rounded bg-slate-800/60">Limpar</button>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono">LIVE SSE</span>
+          </div>
+        </div>
+
+        <div id="terminal" class="flex-1 p-4 bg-[#070a10] overflow-y-auto terminal-scroll mono text-[11px] leading-relaxed text-slate-300 space-y-1">
+          <div class="text-slate-500 italic">Conectando ao stream do journalctl do PC2...</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- RECENT JOBS TABLE -->
+  <section class="mt-8 glass rounded-xl overflow-hidden">
+    <div class="px-4 py-3 bg-slate-900/60 border-b border-slate-800 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-bold text-white">Top Vagas Descobertas na Gupy</span>
+        <span class="text-xs text-slate-400 font-normal">(Triadas pelo Google Gemini 3.8 Flash)</span>
+      </div>
+      <span class="text-xs text-slate-500">Ordenado por aderência</span>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-slate-900/40 text-slate-400 border-b border-slate-800">
+          <tr>
+            <th class="px-4 py-2.5">Score</th>
+            <th class="px-4 py-2.5">Modalidade</th>
+            <th class="px-4 py-2.5">Cargo / Título</th>
+            <th class="px-4 py-2.5">Empresa</th>
+            <th class="px-4 py-2.5">Local</th>
+            <th class="px-4 py-2.5 text-right">Ação</th>
+          </tr>
+        </thead>
+        <tbody id="jobs-tbody" class="divide-y divide-slate-800/60 text-slate-300">
+          <tr><td colspan="6" class="px-4 py-4 text-center text-slate-500">Carregando vagas...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <script>
+    let logEventSource = null;
+
+    async function refreshData() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        
+        document.getElementById('stat-total-vagas').innerText = data.stats.total_vagas || 0;
+        document.getElementById('stat-top-matches').innerText = data.stats.top_matches || 0;
+        document.getElementById('stat-ativas').innerText = data.stats.candidaturas_ativas || 0;
+        
+        const modes = data.stats.modalidades || {};
+        document.getElementById('mode-remoto').innerText = (modes['REMOTE'] || 0) + ' vagas';
+        document.getElementById('mode-hibrido').innerText = (modes['HYBRID'] || 0) + ' vagas';
+
+        const tbody = document.getElementById('jobs-tbody');
+        if (data.stats.recent_jobs && data.stats.recent_jobs.length > 0) {
+          tbody.innerHTML = data.stats.recent_jobs.map(j => {
+            const scoreColor = j.match_score >= 80 ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : (j.match_score >= 60 ? 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' : 'text-slate-400 bg-slate-800');
+            const modeBadge = j.work_mode === 'REMOTE' ? '🏠 Remoto' : (j.work_mode === 'HYBRID' ? '🏢/🏠 Híbrido' : '🏢 Presencial');
+            return '<tr class="hover:bg-slate-800/30 transition">' +
+              '<td class="px-4 py-2.5 font-bold"><span class="px-2 py-0.5 rounded border ' + scoreColor + '">' + j.match_score + '%</span></td>' +
+              '<td class="px-4 py-2.5 font-medium text-slate-300">' + modeBadge + '</td>' +
+              '<td class="px-4 py-2.5 font-semibold text-white">' + j.title + '</td>' +
+              '<td class="px-4 py-2.5 text-slate-400">' + j.company + '</td>' +
+              '<td class="px-4 py-2.5 text-slate-400">' + (j.location || 'Brasil') + '</td>' +
+              '<td class="px-4 py-2.5 text-right"><a href="' + j.url + '" target="_blank" class="text-blue-400 hover:text-blue-300 font-semibold hover:underline">Abrir Vaga ↗</a></td>' +
+            '</tr>';
+          }).join('');
+        }
+
+        const isRunning = data.service_state.is_running_cycle;
+        const statusText = document.getElementById('service-status-text');
+        const runBtn = document.getElementById('btn-run');
+        if (isRunning) {
+          statusText.innerText = 'Executando Ciclo (' + data.service_state.current_action + ')';
+          runBtn.innerText = '⏳ Executando...';
+          runBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+          statusText.innerText = 'Daemon Ativo (PC2)';
+          runBtn.innerHTML = '<span>▶️</span> Disparar Ciclo Agora';
+          runBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        loadThumbs();
+      } catch (e) {
+        console.error('Erro ao carregar dados:', e);
+      }
+    }
+
+    async function loadThumbs() {
+      try {
+        const res = await fetch('/api/screenshots/list');
+        const list = await res.json();
+        const container = document.getElementById('thumbs-container');
+        document.getElementById('thumbs-count').innerText = list.length + ' capturas';
+        if (list.length > 0) {
+          container.innerHTML = list.map(item => 
+            '<img src="/api/screenshot/' + item.name + '" data-file="' + item.name + '" onclick="selectThumb(this.dataset.file)" title="' + item.name + '" class="h-12 w-20 object-cover rounded border border-slate-700 hover:border-blue-500 cursor-pointer transition shrink-0">'
+          ).join('');
+        }
+      } catch(e) {}
+    }
+
+    function selectThumb(name) {
+      document.getElementById('live-img').src = '/api/screenshot/' + name;
+      document.getElementById('screencast-time').innerText = name;
+      document.getElementById('auto-refresh').checked = false;
+    }
+
+    function refreshScreencast() {
+      if (document.getElementById('auto-refresh').checked) {
+        const img = document.getElementById('live-img');
+        img.src = '/api/screenshot/live?t=' + new Date().getTime();
+        document.getElementById('screencast-time').innerText = new Date().toLocaleTimeString();
+      }
+    }
+
+    async function triggerImmediateCycle() {
+      const btn = document.getElementById('btn-run');
+      btn.innerText = 'Disparando...';
+      try {
+        const res = await fetch('/api/actions/run-cycle', { method: 'POST' });
+        const data = await res.json();
+        appendTerminalLine('[SISTEMA] ' + data.message);
+        refreshData();
+      } catch (e) {
+        alert('Erro ao disparar ciclo: ' + e);
+      }
+    }
+
+    function connectLogStream() {
+      if (logEventSource) logEventSource.close();
+      const terminal = document.getElementById('terminal');
+
+      logEventSource = new EventSource('/api/stream/logs');
+      logEventSource.onmessage = function(event) {
+        try {
+          const payload = JSON.parse(event.data);
+          appendTerminalLine(payload.log);
+        } catch(e) {}
+      };
+      logEventSource.onerror = function() {
+        console.log('Reconectando ao stream de logs...');
+      };
+    }
+
+    function appendTerminalLine(text) {
+      const terminal = document.getElementById('terminal');
+      const div = document.createElement('div');
+      
+      if (text.includes('[ERROR]')) {
+        div.className = 'text-red-400 font-semibold';
+      } else if (text.includes('[ADVANCER') || text.includes('[HUNTER')) {
+        div.className = 'text-cyan-300';
+      } else if (text.includes('GEMINI 3.8 FLASH')) {
+        div.className = 'text-indigo-300 font-medium';
+      } else if (text.includes('INÍCIO DE CICLO') || text.includes('FIM DE CICLO')) {
+        div.className = 'text-emerald-400 font-bold';
+      } else {
+        div.className = 'text-slate-300';
+      }
+
+      div.innerText = text;
+      terminal.appendChild(div);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function clearTerminal() {
+      document.getElementById('terminal').innerHTML = '';
+    }
+
+    refreshData();
+    connectLogStream();
+    setInterval(refreshScreencast, 1500);
+    setInterval(refreshData, 0);
+  </script>
+</body>
+</html>

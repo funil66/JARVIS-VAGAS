@@ -1,0 +1,16 @@
+[Unit]
+Description=Gupy Automation Service - Autonomous Legal Job Search & Step Advancement Agent (PC2 Native)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/RPA-VAGAS
+ExecStart=%h/RPA-VAGAS/.venv/bin/python gupy_service.py daemon --interval 60
+Restart=always
+RestartSec=30
+EnvironmentFile=%h/RPA-VAGAS/.env
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

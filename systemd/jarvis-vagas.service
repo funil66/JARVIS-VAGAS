@@ -1,0 +1,16 @@
+[Unit]
+Description=JARVIS Vagas - Autonomous Legal Job Search & HITL Application Agent
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/jarvis-vagas
+ExecStart=/opt/jarvis-vagas/.venv/bin/python cli.py daemon --interval 60 --auto-apply --prod
+Restart=always
+RestartSec=30
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

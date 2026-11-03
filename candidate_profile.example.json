@@ -1,0 +1,197 @@
+{
+  "name": "Candidato Exemplo",
+  "title": "Advogado Sênior",
+  "oab": "OAB/SP 000.000",
+  "email": "candidato@exemplo.com",
+  "phone": "+55 (11) 99999-9999",
+  "phone_raw": "+5511999999999",
+  "city": "São Paulo",
+  "state": "SP",
+  "country": "Brasil",
+  "linkedin": "https://www.linkedin.com/in/exemplo/",
+  "cv_pdf_path": "data/curriculo_exemplo.pdf",
+  "education": [
+    {
+      "institution": "Universidade de São Paulo (USP)",
+      "degree": "Graduação em Direito (Bacharelado)",
+      "status": "Concluído",
+      "period": "2012 – 2017"
+    },
+    {
+      "institution": "Escola Técnica Estadual (ETEC)",
+      "degree": "Técnico em Serviços Jurídicos",
+      "status": "Concluído",
+      "period": "2010 – 2011"
+    }
+  ],
+  "driver_license": {
+    "has_cnh": true,
+    "category": "B",
+    "status": "Ativa"
+  },
+  "mobility_and_relocation": {
+    "available_for_travel": true,
+    "available_for_relocation": true,
+    "description": "Disponibilidade total para viagens ou mudança de domicílio corporativo para qualquer estado ou cidade do Brasil."
+  },
+  "family_ties": {
+    "has_family_ties": false,
+    "description": "NÃO possui parentesco, indicação interna ou vínculos familiares com colaboradores ou dirigentes de nenhuma das empresas contratantes."
+  },
+  "work_preference_order": [
+    "REMOTE",
+    "HYBRID",
+    "PRESENTIAL"
+  ],
+  "salary_expectation": {
+    "min": 0.0,
+    "target": 0.0,
+    "display_text": "A combinar",
+    "display_number": 0,
+    "bracket_preference": "A combinar",
+    "open_to_negotiation": true,
+    "rule": "Quando perguntado sobre pretensão salarial, preencher com 'A combinar' ou selecionar faixa compatível."
+  },
+  "languages": {
+    "Portuguese": "Nativo",
+    "English": "Avançado para leitura, escrita e conversação técnica"
+  },
+  "areas_of_expertise": [
+    "Contencioso Cível Estratégico e Massivo",
+    "Contencioso Bancário",
+    "Fraudes Digitais (Golpe do PIX e Engenharia Social)",
+    "Superendividamento (Lei Federal 14.181/2021)",
+    "Direito do Consumidor",
+    "Direito Trabalhista",
+    "Contratos Civis e Comerciais",
+    "Legal Ops & Controladoria Jurídica",
+    "Jurimetria Aplicada",
+    "Auditoria e Cumprimento Tempestivo de Prazos",
+    "Saneamento de Carteiras e Redução de Provisões"
+  ],
+  "erps": [
+    "LEGALE",
+    "ELAW",
+    "ProJuris",
+    "CPJ",
+    "SPYDER",
+    "QUAL7Y",
+    "TEDESCO",
+    "PJUR",
+    "PROJURID",
+    "PJe",
+    "e-SAJ",
+    "Projudi",
+    "Eproc"
+  ],
+  "career_history": [
+    {
+      "role": "Advogado Consultor e Contencioso Estratégico",
+      "company": "Atuação Autônoma",
+      "location": "São Paulo - SP",
+      "period": "Set/2025 – Presente",
+      "summary": "Gestão integral de carteira corporativa, correspondência estratégica para grandes bancas nacionais, sustentações orais e revisão contratual."
+    },
+    {
+      "role": "Advogado Sênior – Contencioso Massivo Bancário",
+      "company": "Escritório de Advocacia Modelo",
+      "location": "São Paulo - SP",
+      "period": "Fev/2025 – Ago/2025",
+      "summary": "Condução estratégica de carteira robusta de processos ativos de bancos como Instituição Financeira Modelo e Instituição Financeira Modelo; teses defensivas em fraudes digitais (PIX); aplicação diária de jurimetria."
+    },
+    {
+      "role": "Advogado Pleno / Sênior – Contencioso Bancário",
+      "company": "Banca Jurídica Modelo",
+      "location": "Bebedouro - SP",
+      "period": "Abr/2023 – Jan/2025",
+      "summary": "Defesa técnica bancária, foco na Lei de Superendividamento (14.181/2021), auditoria técnica de logs transacionais e saneamento de carteiras com redução de passivo contingente."
+    },
+    {
+      "role": "Advogado Consultor e Contencioso Estratégico",
+      "company": "Atuação Autônoma",
+      "location": "São Paulo - SP",
+      "period": "Mai/2021 – Abr/2023",
+      "summary": "Consultoria preventiva e contencioso cível, consumerista e trabalhista."
+    },
+    {
+      "role": "Coordenador Jurídico",
+      "company": "Sociedade de Advocacia Modelo",
+      "location": "São Paulo - SP",
+      "period": "Jan/2020 – Mai/2021",
+      "summary": "Liderança de equipe multidisciplinar, validação final de peças complexas e implementação de fluxos de Legal Ops."
+    },
+    {
+      "role": "Advogado Autônomo e Consultor Jurídico",
+      "company": "Atuação Autônoma",
+      "location": "São Paulo - SP",
+      "period": "Jan/2017 – Jan/2020",
+      "summary": "Contencioso cível geral e advocacia de correspondência para grandes bancas."
+    }
+  ],
+  "screening_rules_gupy": {
+    "parentesco": {
+      "keywords": [
+        "parentesco",
+        "parente",
+        "familiar",
+        "colaborador da empresa",
+        "trabalha na empresa",
+        "indicação"
+      ],
+      "answer": "Não",
+      "value": false,
+      "rule": "SEMPRE selecionar 'Não'. Candidato não tem familiares nem parentesco nas empresas contratantes."
+    },
+    "pretensao_salarial": {
+      "keywords": [
+        "pretensão salarial",
+        "expectativa salarial",
+        "salário desejado",
+        "remuneração"
+      ],
+      "answer": "A combinar",
+      "numeric_value": 0,
+      "rule": "Inserir 'A combinar' em campos de texto ou selecionar faixa compatível."
+    },
+    "disponibilidade_mudanca": {
+      "keywords": [
+        "disponibilidade de mudança",
+        "reside com fácil acesso",
+        "disponibilidade para residir",
+        "disponibilidade de viagens"
+      ],
+      "answer": "Sim",
+      "value": true,
+      "rule": "SEMPRE selecionar 'Sim'. Reside em São Paulo/SP com total mobilidade para viagens ou mudança de domicílio corporativo."
+    },
+    "cnh": {
+      "keywords": [
+        "possui cnh",
+        "carteira de habilitação",
+        "cnh ativa",
+        "categoria de cnh"
+      ],
+      "answer": "Sim",
+      "category": "B",
+      "rule": "Possui CNH ativa categoria B."
+    },
+    "ingles": {
+      "keywords": [
+        "nível de inglês",
+        "idioma inglês",
+        "conhecimento em inglês"
+      ],
+      "answer": "Avançado",
+      "rule": "Inglês Avançado para leitura, escrita e conversação técnica."
+    },
+    "pcd": {
+      "keywords": [
+        "você é pcd",
+        "pessoa com deficiência",
+        "cota pcd"
+      ],
+      "answer": "Não",
+      "rule": "Não é PCD."
+    }
+  }
+}

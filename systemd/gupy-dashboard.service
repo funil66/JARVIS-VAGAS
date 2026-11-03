@@ -1,0 +1,14 @@
+[Unit]
+Description=JARVIS RPA Vagas Web Dashboard (PC2 Live Streaming Front-End)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/RPA-VAGAS
+ExecStart=%h/RPA-VAGAS/.venv/bin/python web_dashboard.py
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=default.target

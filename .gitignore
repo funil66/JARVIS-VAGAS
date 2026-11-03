@@ -1,0 +1,31 @@
+# IDE Files
+/nbproject/
+.idea/*
+
+## Sublime Text cache files
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.env
+data/*.db
+data/*.sqlite
+logs/
+.venv/
+venv/
+
+# Proteção de Caches e Artefatos Temporários (Regra Raiz Limpa)
+.ruff_cache/
+
+# Sessões e Backups
+data/gupy_session.json
+data/*.bak
+*.bak
+data/Curriculo_*.pdf
+*.log
